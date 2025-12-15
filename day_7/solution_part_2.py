@@ -57,13 +57,14 @@ def solution(starting_point: int, grid: list[list[str]]) -> int:
     return len(seen_splitters)
 
 
-@lru_cache
 def count_timeline(starting_point, grid):
 
     all_paths = []
     number_of_rows = len(grid)
     number_of_columns = len(grid[0])
 
+
+    # @lru_cache
     def depth_first_traversal(current_location, current_path):
         current_row, current_column = current_location
 
@@ -91,6 +92,102 @@ def count_timeline(starting_point, grid):
 
     return len(all_paths)
 
+
+def count_timeline_cached(starting_point, grid):
+
+    # all_paths = []
+    number_of_rows = len(grid)
+    number_of_columns = len(grid[0])
+    paths_counter = 0
+    memo = {}
+
+
+    # @lru_cache
+    def depth_first_traversal(current_location):
+
+        nonlocal paths_counter
+        nonlocal memo
+        current_row, current_column = current_location
+
+        # print((current_row, current_column))
+
+        if current_row == number_of_rows - 1:
+            print("hey")
+            paths_counter += 1
+            return paths_counter
+        
+        if grid[current_row][current_column] == "^":
+            print(current_row, current_column)
+            if current_column - 1 >= 0: # left
+                if not (current_row + 1, current_column - 1) in memo:
+                    memo[(current_row + 1, current_column - 1)] = depth_first_traversal((current_row + 1, current_column - 1))
+                else:
+                    paths_counter += memo.get((current_row + 1, current_column - 1), 0)
+                    return paths_counter
+            
+            if current_column + 1 < number_of_columns - 1:  # right
+                if not (current_row + 1, current_column + 1) in memo:
+                    memo[(current_row + 1, current_column + 1)] = depth_first_traversal((current_row + 1, current_column + 1))
+                else:
+                    paths_counter += memo.get((current_row + 1, current_column + 1), 0)
+                    return paths_counter
+        else:
+            # print((current_row + 1, current_column))
+            # print(grid[current_row + 1][current_column])
+            if not (current_row + 1, current_column) in memo:
+                memo[(current_row + 1, current_column)] = depth_first_traversal((current_row + 1, current_column))
+            else:
+                paths_counter += memo.get((current_row + 1, current_column), 0)
+                return paths_counter
+                
+
+    depth_first_traversal((0, starting_point))
+
+    print(memo)
+
+    # for element in all_paths:
+    #     print(element)
+
+    return paths_counter
+
+
+def count_timeline_3(starting_point, grid):
+
+    number_of_rows = len(grid)
+    number_of_columns = len(grid[0])
+    path_counter = 0
+
+
+    # @lru_cache
+    def depth_first_traversal(current_location):
+        current_row, current_column = current_location
+
+        # print((current_row, current_column))
+
+        nonlocal path_counter
+
+        if current_row == number_of_rows - 1:
+            path_counter += 1
+            return
+        
+        if grid[current_row][current_column] == "^":
+            if current_column - 1 >= 0: # left
+                depth_first_traversal((current_row + 1, current_column - 1))
+
+            if current_column + 1 < number_of_columns - 1:  # right
+                depth_first_traversal((current_row + 1, current_column + 1))
+        else:
+            depth_first_traversal((current_row + 1, current_column))
+                
+
+    depth_first_traversal((0, starting_point))
+
+    # for element in all_paths:
+    #     print(element)
+
+    return path_counter
+
+
 if __name__ == "__main__":
 
     print("Solution")
@@ -108,4 +205,4 @@ if __name__ == "__main__":
 
     print(result)
 
-    print(count_timeline(starting_point, grid))
+    print(count_timeline_3(starting_point, grid))
