@@ -24,8 +24,9 @@ def optimise_fresh_ranges(ranges):
         range_left_side = current_range[0]
         range_right_side = current_range[1]
 
-        if range_left_side > optimised_fresh_ranges[-1][0] and range_left_side < optimised_fresh_ranges[-1][1]:
-            optimised_fresh_ranges[-1][1] = range_right_side
+        if range_left_side >= optimised_fresh_ranges[-1][0] and range_left_side <= optimised_fresh_ranges[-1][1]:
+            if range_right_side > optimised_fresh_ranges[-1][1]:
+                optimised_fresh_ranges[-1][1] = range_right_side
         else:
             optimised_fresh_ranges.append(current_range)
 
@@ -52,7 +53,6 @@ def get_products():
 
 
 def get_fresh_products(fresh_ranges, products):
-
     fresh_products = []
 
     for product in products:
@@ -63,7 +63,6 @@ def get_fresh_products(fresh_ranges, products):
 
             if product >= range_left_side and product <= range_right_side:
                 fresh_products.append(product)
-
 
     return fresh_products
 
@@ -87,10 +86,5 @@ if __name__ == "__main__":
 
     fresh_products = get_fresh_products(optimised_fresh_ranges, products)
 
-    print(fresh_products)
+    # print(fresh_products)
     print(len(fresh_products))
-
-    
-    # 672 - too low - with break
-    # 757 - too high - no break
-  
